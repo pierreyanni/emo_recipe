@@ -21,6 +21,7 @@ from speechbrain.dataio.dataio import read_audio
 # import gdown # for download from google drive
 
 logger = logging.getLogger(__name__)
+
 IEMOCAP_URL = "https://www.dropbox.com/s/boe475pxtft319r/IEMOCAP_processed.tar.gz?dl=0"
 # IEMOCAP_URL = "https://drive.google.com/uc?id=1YPuLNUqQ0fX-Qio-oV4IkTkVCUHPJb95"
 SAMPLERATE = 16000
@@ -77,8 +78,7 @@ def prepare_data(
         data_folder, "IEMOCAP_ahsn_leave-two-speaker-out"
     )
     if not check_folders(train_folder):
-        download_data(data_folder)
-
+        unpack_iemocap(data_folder)
 
     # List files and create manifest from list
     logger.info(
@@ -256,4 +256,4 @@ def unpack_iemocap(destination):
     destination : str
         Place to put dataset.
     """
-    shutil.unpack_archive(IEMOCAP_PATH, destination)
+    shutil.unpack_archive(IEMOCAP_processed.tar.gz, destination)
