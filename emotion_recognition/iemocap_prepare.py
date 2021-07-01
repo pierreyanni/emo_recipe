@@ -256,4 +256,4 @@ def unpack_iemocap(destination):
     destination : str
         Place to put dataset.
     """
-    shutil.unpack_archive(IEMOCAP_processed.tar.gz, destination)
+    shutil.unpack_archive("IEMOCAP_processed.tar.gz", destination)
