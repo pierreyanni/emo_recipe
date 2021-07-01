@@ -13,7 +13,7 @@ from iemocap_prepare import prepare_data
 # PREPARE MODEL
 
 class SpkIdBrain(sb.Brain):
-    
+
     def compute_forward(self, batch, stage):
         """Computation pipeline based on a encoder + speaker classifier.
         Data augmentation and environmental corruption are applied to the
@@ -31,7 +31,7 @@ class SpkIdBrain(sb.Brain):
         outputs = self.modules.classifier(embeddings)
 
         return outputs
-    
+
     def fit_batch(self, batch):
         """Train the parameters given a single batch in input"""
 
@@ -48,7 +48,7 @@ class SpkIdBrain(sb.Brain):
             self.optimizer.zero_grad()
 
         return loss.detach()
-    
+
     def compute_objectives(self, predictions, batch, stage):
         """Computes the loss using speaker-id as label.
         """
@@ -128,15 +128,16 @@ class SpkIdBrain(sb.Brain):
             )
 
             # Save the current checkpoint and delete previous checkpoints,
-            self.checkpointer.save_and_keep_only(meta=stats, min_keys=["error"])
+            self.checkpointer.save_and_keep_only(meta=stats,
+                                                 min_keys=["error"])
 
-        # We also write statistics about test data to stdout and to the logfile.
+        # We also write statistics about test data to stdout and to logfile.
         if stage == sb.Stage.TEST:
             self.hparams.train_logger.log_stats(
                 {"Epoch loaded": self.hparams.epoch_counter.current},
                 test_stats=stats,
             )
-            
+
     def output_predictions_test_set(
         self,
         test_set,
@@ -176,11 +177,11 @@ class SpkIdBrain(sb.Brain):
             )
 
             save_file = os.path.join(self.hparams.output_folder,
-                             "predictions.csv")
+                                     "predictions.csv")
             with open(save_file, 'w', newline='') as csvfile:
                 outwriter = csv.writer(csvfile, delimiter=',')
                 outwriter.writerow(['id', 'prediction', 'true_value'])
-        
+
         self.on_evaluate_start(max_key=max_key, min_key=min_key)  # done before
         self.modules.eval()
         with torch.no_grad():
@@ -188,22 +189,23 @@ class SpkIdBrain(sb.Brain):
                 test_set, dynamic_ncols=True, disable=not progressbar
             ):
                 self.step += 1
-                
+
                 emo_ids = batch.id
                 true_vals = batch.emo_encoded.data.squeeze().tolist()
                 output = self.compute_forward(batch, stage=Stage.TEST)
                 predictions = torch.argmax(output, dim=-1).squeeze().tolist()
-                
+
                 with open(save_file, 'a', newline='') as csvfile:
                     outwriter = csv.writer(csvfile, delimiter=',')
                     for emo_id, prediction, true_val in zip(
-                        emo_ids, predictions, true_vals):
+                            emo_ids, predictions, true_vals):
                         outwriter.writerow([emo_id, prediction, true_val])
 
                 # Debug mode only runs a few batches
                 if self.debug and self.step == self.debug_batches:
                     break
         self.step = 0
+
 
 class Stage(Enum):
     """Simple enum to track stage of experiments."""
@@ -212,12 +214,13 @@ class Stage(Enum):
     VALID = auto()
     TEST = auto()
 
+
 def dataio_prep(hparams):
     """This function prepares the datasets to be used in the brain class.
-    It also defines the data processing pipeline through user-defined functions.
-    We expect `prepare_mini_librispeech` to have been called before this,
-    so that the `train.json`, `valid.json`,  and `valid.json` manifest files
-    are available.
+    It also defines the data processing pipeline through user-defined
+    functions. We expect `prepare_mini_librispeech` to have been called before
+    this, so that the `train.json`, `valid.json`,  and `valid.json` manifest
+    files are available.
 
     Arguments
     ---------
@@ -275,6 +278,7 @@ def dataio_prep(hparams):
     )
 
     return datasets
+
 
 # RECIPE BEGINS!
 if __name__ == "__main__":
@@ -340,12 +344,10 @@ if __name__ == "__main__":
         min_key="error",
         test_loader_kwargs=hparams["dataloader_options"],
     )
-    
+
     # Create output file with predictions
     spk_id_brain.output_predictions_test_set(
         test_set=datasets["test"],
         min_key="error",
         test_loader_kwargs=hparams["dataloader_options"],
-    )    
-    
-    
+    )

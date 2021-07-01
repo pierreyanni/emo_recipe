@@ -1,6 +1,6 @@
 # Emotion recognition experiments with IEMOCAP.
 This folder contains scripts for running emotion recognition experiments with the IEMOCAP dataset (https://sail.usc.edu/iemocap/).
-Get the IEMOCAP dataset from https://sail.usc.edu/iemocap/iemocap_release.htm and change the url link `IEMOCAP_URL` in `iemocap_prepare.py`.
+Get the IEMOCAP dataset from https://sail.usc.edu/iemocap/iemocap_release.htm and put it in the same folder as `iemocap_prepare.py` under the name `IEMOCAP_processed.tar.gz`.
 
 # Training ECAPA-TDNN
 Run the following command to train :

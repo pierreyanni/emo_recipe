@@ -1,8 +1,9 @@
 """
-Downloads and creates data manifest files for IEMOCAP (https://sail.usc.edu/iemocap/).
+Downloads and creates data manifest files for IEMOCAP
+(https://sail.usc.edu/iemocap/).
 For speaker-id, different sentences of the same speaker must appear in train,
 validation, and test sets. In this case, these sets are thus derived from
-splitting the orginal training set intothree chunks.
+splitting the orginal training set into three chunks.
 
 Authors:
  * Mirco Ravanelli, 2021
@@ -12,18 +13,12 @@ Authors:
 import os
 import json
 import shutil
-import pathlib
 import random
 import logging
-from speechbrain.utils.data_utils import get_all_files, download_file
+from speechbrain.utils.data_utils import get_all_files
 from speechbrain.dataio.dataio import read_audio
 
-# import gdown # for download from google drive
-
 logger = logging.getLogger(__name__)
-
-IEMOCAP_URL = "https://www.dropbox.com/s/boe475pxtft319r/IEMOCAP_processed.tar.gz?dl=0"
-# IEMOCAP_URL = "https://drive.google.com/uc?id=1YPuLNUqQ0fX-Qio-oV4IkTkVCUHPJb95"
 SAMPLERATE = 16000
 
 
@@ -34,8 +29,8 @@ def prepare_data(
     save_json_test,
     split_ratio=[80, 10, 10],
     different_speakers=False,
-    seed=12,
-    ):
+    seed=12
+):
     """
     Prepares the json files for the IEMOCAP dataset.
 
@@ -52,17 +47,18 @@ def prepare_data(
     save_json_test : str
         Path where the test data specification file will be saved.
     split_ratio: list
-        List composed of three integers that sets split ratios for train, valid,
-        and test sets, respecively. For instance split_ratio=[80, 10, 10] will
-        assign 80% of the sentences to training, 10% for validation, and 10%
-        for test.
+        List composed of three integers that sets split ratios for train,
+        valid, and test sets, respecively.
+        For instance split_ratio=[80, 10, 10] will assign 80% of the sentences
+        to training, 10% for validation, and 10% for test.
     seed : int
         Seed for reproducibility
 
     Example
     -------
     >>> data_folder = '/path/to/iemocap'
-    >>> prepare_data(data_path, data_folder, 'train.json', 'valid.json', 'test.json')
+    >>> prepare_data(data_path, data_folder, 'train.json', 'valid.json',
+        'test.json')
     """
 
     # setting seeds for reproducible code.
@@ -85,7 +81,7 @@ def prepare_data(
         f"Creating {save_json_train}, {save_json_valid}, and {save_json_test}"
     )
     extension = [".wav"]
-    
+
     # Randomly split the signal list into train, valid, and test sets.
     wav_list = get_all_files(train_folder, match_and=extension)
     if different_speakers:
@@ -165,12 +161,13 @@ def check_folders(*folders):
             return False
     return True
 
+
 def split_different_speakers(wav_list):
     """"Constructs train, validation and test sets that do not share common
     speakers. There are two different speakers in each session. Train set is
     constituted of 3 sessions, validation set another session and test set the
     remaining session.
-    
+
     Arguments
     ---------
     wav_list: list
@@ -178,13 +175,13 @@ def split_different_speakers(wav_list):
 
     Returns
     ------
-    dictionary containing train, valid, and test splits.   
+    dictionary containing train, valid, and test splits.
     """
     data_split = {k: [] for k in ['train', 'valid', 'test']}
-    sessions =  list(range(1, 6))
+    sessions = list(range(1, 6))
     random.shuffle(sessions)
     random.shuffle(wav_list)
-    
+
     for path_wav in wav_list:
         session = int(os.path.split(path_wav)[-1][4])
         if session in sessions[:3]:
@@ -195,24 +192,25 @@ def split_different_speakers(wav_list):
             data_split['test'].append(path_wav)
     return data_split
 
+
 def split_sets(wav_list, split_ratio):
     """Randomly splits the wav list into training, validation, and test lists.
     Note that a better approach is to make sure that all the classes have the
     same proportion of samples (e.g, spk01 should have 80% of samples in
     training, 10% validation, 10% test, the same for speaker2 etc.). This
     is the approach followed in some recipes such as the Voxceleb one. For
-    simplicity, we here simply split the full list without necessarly respecting
-    the split ratio within each class.
+    simplicity, we here simply split the full list without necessarly
+    respecting the split ratio within each class.
 
     Arguments
     ---------
     wav_list : list
         list of all the signals in the dataset
     split_ratio: list
-        List composed of three integers that sets split ratios for train, valid,
-        and test sets, respectively. For instance split_ratio=[80, 10, 10] will
-        assign 80% of the sentences to training, 10% for validation, and 10%
-        for test.
+        List composed of three integers that sets split ratios for train,
+        valid, and test sets, respectively.
+        For instance split_ratio=[80, 10, 10] will assign 80% of the sentences
+        to training, 10% for validation, and 10% for test.
 
     Returns
     ------
@@ -233,20 +231,6 @@ def split_sets(wav_list, split_ratio):
 
     return data_split
 
-def download_data(destination):
-    """Download dataset and unpack it.
-
-    Arguments
-    ---------
-    destination : str
-        Place to put dataset.
-    """
-    train_archive = os.path.join(destination, "IEMOCAP_processed.tar.gz")
-    dest_dir = pathlib.Path(train_archive).resolve().parent
-    dest_dir.mkdir(parents=True, exist_ok=True)
-    download_file(IEMOCAP_URL, train_archive)
-    # gdown.download(IEMOCAP_URL, train_archive, quiet=False) 
-    shutil.unpack_archive(train_archive, destination)
 
 def unpack_iemocap(destination):
     """unpacks file.
