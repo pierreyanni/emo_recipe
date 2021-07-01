@@ -18,10 +18,11 @@ import logging
 from speechbrain.utils.data_utils import get_all_files, download_file
 from speechbrain.dataio.dataio import read_audio
 
-import gdown # for download from google drive
+# import gdown # for download from google drive
 
 logger = logging.getLogger(__name__)
-IEMOCAP_URL = "https://drive.google.com/uc?id=1YPuLNUqQ0fX-Qio-oV4IkTkVCUHPJb95"
+IEMOCAP_URL = "https://www.dropbox.com/s/boe475pxtft319r/IEMOCAP_processed.tar.gz?dl=0"
+# IEMOCAP_URL = "https://drive.google.com/uc?id=1YPuLNUqQ0fX-Qio-oV4IkTkVCUHPJb95"
 SAMPLERATE = 16000
 
 
@@ -59,7 +60,7 @@ def prepare_data(
 
     Example
     -------
-    >>> data_folder = '/path/to/emocap'
+    >>> data_folder = '/path/to/iemocap'
     >>> prepare_data(data_path, data_folder, 'train.json', 'valid.json', 'test.json')
     """
 
@@ -243,8 +244,8 @@ def download_data(destination):
     train_archive = os.path.join(destination, "IEMOCAP_processed.tar.gz")
     dest_dir = pathlib.Path(train_archive).resolve().parent
     dest_dir.mkdir(parents=True, exist_ok=True)
-    # download_file(IEMOCAP_URL, train_archive)
-    gdown.download(IEMOCAP_URL, train_archive, quiet=False) 
+    download_file(IEMOCAP_URL, train_archive)
+    # gdown.download(IEMOCAP_URL, train_archive, quiet=False) 
     shutil.unpack_archive(train_archive, destination)
 
 def unpack_iemocap(destination):

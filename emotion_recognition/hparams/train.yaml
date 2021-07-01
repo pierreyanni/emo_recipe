@@ -13,7 +13,7 @@ __set_seed: !!python/object/apply:torch.manual_seed [!ref <seed>]
 
 # Set up folders for reading from and writing to
 # Dataset will be downloaded to the `data_folder`
-data_folder: .
+data_folder: ./data
 output_folder: !ref ./results
 save_folder: !ref <output_folder>/save
 train_log: !ref <output_folder>/train_log.txt
