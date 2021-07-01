@@ -21,7 +21,7 @@ from speechbrain.dataio.dataio import read_audio
 # import gdown # for download from google drive
 
 logger = logging.getLogger(__name__)
-IEMOCAP_URL = "https://www.dropbox.com/s/boe475pxtft319r/IEMOCAP_processed.tar.gz?dl=0"
+IEMOCAP_URL = "https://www.dropbox.com/s/boe475pxtft319r/IEMOCAP_processed.tar?dl=0"
 # IEMOCAP_URL = "https://drive.google.com/uc?id=1YPuLNUqQ0fX-Qio-oV4IkTkVCUHPJb95"
 SAMPLERATE = 16000
 
